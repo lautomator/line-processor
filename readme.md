@@ -21,3 +21,5 @@ Setup
 * Download this repository.
 
 * Open `index.html` in a browser.
+
+* You can also `cd` into the project directory from your terminal and use Python SimpleHTTPServer: `python SimpleHTTPServer 9000`.
