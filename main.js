@@ -6,10 +6,10 @@ var lineProcessorApp = function () {
         templates: data.templates,
         line: null,
         lineProcessed: [],
-        lineWordsOnly: [],
         words: 0,
         letters: 0,
         longestWordCount: 0,
+        vowels: ["a", "e", "i", "o", "u"],
         mostVowels: {
             word: null,
             vowels: [],
@@ -126,6 +126,74 @@ var lineProcessorApp = function () {
         return longest;
     }
 
+    function setMostVowels(result) {
+        // Takes in the result from the
+        // vowel search query <obj>.
+        model.mostVowels.word = result.word;
+        model.mostVowels.vowels = result.vowels;
+        model.mostVowels.count = result.count;
+    }
+
+    function getWordWithMostVowels(words, vowels) {
+        // Returns a word with the most
+        // vowels, the count, and the
+        // vowels used <obj>. Takes in
+        // the words and vowels <arrays>.
+        var mostVowels = {
+            word: null,
+            vowels: [],
+            count: 0
+        };
+        var index = 0;
+        var count = 0;
+        var len = words.length;
+        var results = [];
+        var hasVowels = "";
+        var maxVowels = {
+            vowels: null,
+            index: null,
+            len: 0
+        }
+
+        while (index < len) {
+            while (count < words[index].length) {
+                // check for vowels
+                if (vowels.indexOf(words[index][count]) > -1) {
+                    // the word has a vowel
+                    hasVowels += vowels[vowels.indexOf(words[index][count])];
+                }
+                count += 1;
+            }
+
+            results[index] = hasVowels;
+
+            // resets
+            hasVowels = "";
+            count = 0;
+            index += 1;
+        }
+
+        // get the index with the most vowels
+        index = 0;
+        while (index < results.length) {
+            if (results[index].length > maxVowels.len) {
+                maxVowels.vowels = results[index];
+                maxVowels.index = index;
+                maxVowels.len = results[index].length;
+            }
+            index += 1;
+        }
+
+        // set the results
+        if (maxVowels.index !== null) {
+            mostVowels.word = words[maxVowels.index];
+            mostVowels.vowels = maxVowels.vowels;
+            mostVowels.count = maxVowels.len;
+        }
+
+        return mostVowels;
+    }
+
     // view
     function render(m) {
         var template = m.templates[0];
@@ -139,21 +207,23 @@ var lineProcessorApp = function () {
         html = html.replace("%data%", m.letters.toString());
         html += template.replace("%header%", "length of longest word:");
         html = html.replace("%data%", m.longestWordCount.toString());
-        // html += template.replace("%header%", "total:");
-        // html = html.replace("%data%", m.total);
+        html += template.replace("%header%", "greatest number of vowels:");
+        html = html.replace("%data%", (m.mostVowels.count.toString() + "/" + m.mostVowels.word + "(" + m.mostVowels.vowels + ")"));
 
         dataEl.innerHTML = html;
     }
 
     function init() {
+        var wordsOnly = null;
         var longest = 0;
         setLine(model.targets.lineIn.value.trim());
         setLineProcessed(model.line);
         setWordCount(model.lineProcessed);
         setLettersCount(getLettersCount(model.line));
-        longest = getLongestWord(getWords(model.lineProcessed));
+        wordsOnly = getWords(model.lineProcessed);
+        longest = getLongestWord(wordsOnly);
         setLongest(longest);
-
+        setMostVowels(getWordWithMostVowels(wordsOnly, model.vowels));
 
         render(model);
         console.log(model);
