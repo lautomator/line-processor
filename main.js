@@ -15,7 +15,7 @@ var lineProcessorApp = function () {
             vowels: [],
             count: 0
         },
-        numbers: "none used"
+        numbers: 0
     };
 
     function setLine(uin) {
@@ -191,7 +191,7 @@ var lineProcessorApp = function () {
         if (results[0] !== null) {
             model.numbers = results[1].toString() + "/" + results[0].sort().toString();
         } else {
-            model.numbers = "none";
+            model.numbers = results[1];
         }
     }
 
@@ -248,7 +248,6 @@ var lineProcessorApp = function () {
         setMostVowels(getWordWithMostVowels(wordsOnly, model.vowels));
         numbers = getNumbers(model.line);
         setNumbersResults(numbers);
-
         render(model);
     }
 
