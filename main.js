@@ -188,10 +188,10 @@ var lineProcessorApp = function () {
     }
 
     function setNumbersResults(results) {
-        if (results !== null) {
-            model.numbers = results.sort().toString();
+        if (results[0] !== null) {
+            model.numbers = results[1].toString() + "/" + results[0].sort().toString();
         } else {
-            model.numbers = "none used";
+            model.numbers = "none";
         }
     }
 
@@ -201,7 +201,14 @@ var lineProcessorApp = function () {
         // used <str>. Takes in the original
         // line with punctuation <str>.
         const re = /[0-9]/g;
-        var results = line.match(re);
+        var results = [];
+
+        results[0] = line.match(re);
+        if (results[0] !== null) {
+            results[1] = line.match(re).length;
+        } else {
+            results[1] = 0;
+        }
         return results;
     }
 
