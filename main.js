@@ -15,7 +15,7 @@ var lineProcessorApp = function () {
             vowels: [],
             count: 0
         },
-        numbers: 0
+        numbers: "none used"
     };
 
     function setLine(uin) {
@@ -40,15 +40,6 @@ var lineProcessorApp = function () {
         model.words = line.length;
     }
 
-    function getWordCount(line) {
-        // Returns the number of
-        // words <num>. Takes in
-        // the line <array>.
-        if (typeof line === "object") {
-            return line.length;
-        }
-    }
-
     function setLettersCount(count) {
         model.letters = count;
     }
@@ -58,7 +49,7 @@ var lineProcessorApp = function () {
         // letters <num>. Takes in
         // the line <str>.
         var count = 0;
-        var re = /[a-zA-Z]/;
+        const re = /[a-zA-Z]/;
         var index = 0;
         var len = line.length;
 
@@ -81,13 +72,13 @@ var lineProcessorApp = function () {
         var index = 0;
         var strIndex = 0;
         var len = procLine.length;
-        var re = /[a-zA-Z]/;
+        const re = /[a-zA-Z]/;
         var temp = "";
 
         while (index < len) {
             // the entire array
             while (strIndex < procLine[index].length) {
-                if ( procLine[index][strIndex].search(re) === 0) {
+                if (procLine[index][strIndex].search(re) === 0) {
                     temp += procLine[index][strIndex];
                 }
                 strIndex += 1;
@@ -120,7 +111,9 @@ var lineProcessorApp = function () {
             index += 1;
         }
 
-        counts.sort(function(a, b){ return a - b });
+        counts.sort(function (a, b) {
+            return a - b;
+        });
         longest = counts[counts.length - 1];
 
         return longest;
@@ -153,7 +146,7 @@ var lineProcessorApp = function () {
             vowels: null,
             index: null,
             len: 0
-        }
+        };
 
         while (index < len) {
             while (count < words[index].length) {
@@ -194,6 +187,24 @@ var lineProcessorApp = function () {
         return mostVowels;
     }
 
+    function setNumbersResults(results) {
+        if (results !== null) {
+            model.numbers = results.sort().toString();
+        } else {
+            model.numbers = "none used";
+        }
+    }
+
+    function getNumbers(line) {
+        // Returns the number of numbers
+        // used and the numbers
+        // used <str>. Takes in the original
+        // line with punctuation <str>.
+        const re = /[0-9]/g;
+        var results = line.match(re);
+        return results;
+    }
+
     // view
     function render(m) {
         var template = m.templates[0];
@@ -209,6 +220,8 @@ var lineProcessorApp = function () {
         html = html.replace("%data%", m.longestWordCount.toString());
         html += template.replace("%header%", "greatest number of vowels:");
         html = html.replace("%data%", (m.mostVowels.count.toString() + "/" + m.mostVowels.word + "(" + m.mostVowels.vowels + ")"));
+        html += template.replace("%header%", "numbers used:");
+        html = html.replace("%data%", m.numbers);
 
         dataEl.innerHTML = html;
     }
@@ -216,6 +229,8 @@ var lineProcessorApp = function () {
     function init() {
         var wordsOnly = null;
         var longest = 0;
+        var numbers = null;
+
         setLine(model.targets.lineIn.value.trim());
         setLineProcessed(model.line);
         setWordCount(model.lineProcessed);
@@ -224,9 +239,10 @@ var lineProcessorApp = function () {
         longest = getLongestWord(wordsOnly);
         setLongest(longest);
         setMostVowels(getWordWithMostVowels(wordsOnly, model.vowels));
+        numbers = getNumbers(model.line);
+        setNumbersResults(numbers);
 
         render(model);
-        console.log(model);
     }
 
     model.targets.process.addEventListener("click", function () {
