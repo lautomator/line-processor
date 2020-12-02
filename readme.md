@@ -22,4 +22,4 @@ Setup
 
 * Open `index.html` in a browser.
 
-* You can also `cd` into the project directory from your terminal and use Python SimpleHTTPServer: `python SimpleHTTPServer 9000`.
+* You can also `cd` into the project directory from your terminal and use a Python server: `python -m http.server 9000`.
